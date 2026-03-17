@@ -3,30 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>私物洗濯受付システム</title>
+    <title>私物洗濯受付システム | さくらクリーニング</title>
     <style>
-        :root { --line-green: #06c755; --bg-color: #f0f2f5; --hospital-teal: #004d40; }
-        body { font-family: sans-serif; background-color: var(--bg-color); margin: 0; padding: 15px; }
-        .form-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; max-width: 500px; margin: 0 auto; }
-        .header { background: var(--hospital-teal); color: white; padding: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; }
-        .padding { padding: 20px; }
-        .item { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; color: #333; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        .btn-submit { background: var(--line-green); color: white; border: none; width: 100%; padding: 15px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-submit:disabled { background: #a5d6a7 !important; cursor: not-allowed; }
-        .required::after { content: " *"; color: red; }
+        :root { 
+            --line-green: #06c755; 
+            --bg-color: #f0f2f5; 
+            --line-text: #333333;
+        }
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 15px; 
+        }
+        .form-card { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+            max-width: 500px; 
+            margin: 0 auto; 
+        }
+        /* ヘッダーをLINEグリーンに変更 */
+        .header { 
+            background: var(--line-green); 
+            color: white; 
+            padding: 22px 20px; 
+            text-align: center; 
+            font-size: 1.25rem; 
+            font-weight: bold; 
+            letter-spacing: 1px;
+        }
+        .padding { padding: 25px 20px; }
+        .item { margin-bottom: 22px; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            color: var(--line-text); 
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            background-color: #fafafa;
+            -webkit-appearance: none; /* iOS対策 */
+        }
+        /* 入力中、枠線をLINEグリーンにする */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--line-green);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(6, 199, 85, 0.1);
+        }
+        .btn-submit { 
+            background: var(--line-green); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 30px; /* 少し丸みを持たせてモダンに */
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: opacity 0.3s;
+        }
+        .btn-submit:active { opacity: 0.8; }
+        .btn-submit:disabled { background: #ccc !important; cursor: not-allowed; }
+        .required::after { content: " *"; color: #e63946; }
 
-        /* 完了メッセージ（初期状態は非表示） */
-        #success-message { display: none; text-align: center; padding: 40px 20px; }
-        .success-icon { font-size: 60px; margin-bottom: 20px; }
-        .success-title { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 10px; }
+        /* 完了メッセージ */
+        #success-message { display: none; text-align: center; padding: 60px 20px; }
+        .success-icon { font-size: 70px; margin-bottom: 20px; color: var(--line-green); }
+        .success-title { font-size: 1.4rem; font-weight: bold; color: var(--line-text); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="form-card">
-    <div class="header">私物洗濯受付伝票</div>
+    <div class="header">私物洗濯 受付お申込み</div>
     
     <div id="form-area" class="padding">
         <div class="item"><label class="required">1. 利用者様 氏名（漢字）</label><input type="text" id="user" placeholder="例：桜　太郎"></div>
@@ -64,14 +124,15 @@
         <div class="item"><label class="required">10. ご連絡先（電話番号）</label><input type="tel" id="phone" placeholder="例：09012345678"></div>
         
         <button type="button" id="submitBtn" class="btn-submit" onclick="sendData()">この内容で申し込む</button>
+        <p style="text-align:center; font-size:12px; color:#999; margin-top:15px;">※延岡市内の病院に限らせていただきます</p>
     </div>
 
     <div id="success-message">
         <div class="success-icon">✅</div>
         <div class="success-title">送信が完了しました</div>
-        <p style="color: #666; font-size: 0.9rem;">
+        <p style="color: #666; font-size: 1rem; line-height: 1.6;">
             お申し込みありがとうございました。<br>
-            この画面は閉じていただいて構いません。
+            さくらクリーニングにて確認後、順次対応させていただきます。
         </p>
     </div>
 </div>
@@ -102,7 +163,6 @@ async function sendData() {
         return;
     }
 
-    // 送信待機状態
     btn.disabled = true;
     btn.innerText = "送信中... ⏳";
 
@@ -113,7 +173,7 @@ async function sendData() {
             body: JSON.stringify(data) 
         });
         
-        // 成功したらフォームを消してメッセージを出す
+        window.scrollTo(0, 0);
         formArea.style.display = "none";
         successMsg.style.display = "block";
 
