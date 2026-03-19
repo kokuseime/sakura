@@ -24,7 +24,6 @@
             max-width: 500px; 
             margin: 0 auto; 
         }
-        /* ヘッダーをLINEグリーンに変更 */
         .header { 
             background: var(--line-green); 
             color: white; 
@@ -51,9 +50,8 @@
             box-sizing: border-box; 
             font-size: 16px; 
             background-color: #fafafa;
-            -webkit-appearance: none; /* iOS対策 */
+            -webkit-appearance: none;
         }
-        /* 入力中、枠線をLINEグリーンにする */
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--line-green);
@@ -66,16 +64,33 @@
             border: none; 
             width: 100%; 
             padding: 18px; 
-            border-radius: 30px; /* 少し丸みを持たせてモダンに */
+            border-radius: 30px; 
             font-size: 1.1rem; 
             font-weight: bold; 
             cursor: pointer; 
             margin-top: 15px; 
             transition: opacity 0.3s;
         }
-        .btn-submit:active { opacity: 0.8; }
+        .btn-back {
+            background: #fff;
+            color: #666;
+            border: 1px solid #ccc;
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .btn-submit:active, .btn-back:active { opacity: 0.8; }
         .btn-submit:disabled { background: #ccc !important; cursor: not-allowed; }
         .required::after { content: " *"; color: #e63946; }
+
+        /* 確認画面用のスタイル */
+        #confirm-area { display: none; }
+        .confirm-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .confirm-label { font-size: 0.8rem; color: #888; margin-bottom: 4px; }
+        .confirm-value { font-size: 1rem; color: #333; font-weight: bold; }
 
         /* 完了メッセージ */
         #success-message { display: none; text-align: center; padding: 60px 20px; }
@@ -86,11 +101,11 @@
 <body>
 
 <div class="form-card">
-    <div class="header">私物洗濯 受付お申込み</div>
+    <div class="header" id="main-header">私物洗濯 受付お申込み</div>
     
     <div id="form-area" class="padding">
-        <div class="item"><label class="required">1. 利用者様 氏名（漢字）</label><input type="text" id="user" placeholder="例：桜　太郎"></div>
-        <div class="item"><label class="required">2. 利用者様 フリガナ（カタカナ）</label><input type="text" id="user_kana" placeholder="例：サクラ　タロウ"></div>
+        <div class="item"><label class="required">1. 利用者様 氏名</label><input type="text" id="user" placeholder="例：桜　太郎"></div>
+        <div class="item"><label class="required">2. 利用者様 フリガナ</label><input type="text" id="user_kana" placeholder="例：サクラ　タロウ"></div>
         <div class="item">
             <label class="required">3. 施設名</label>
             <select id="facility">
@@ -117,14 +132,21 @@
                 <option value="来店">来店</option>
             </select>
         </div>
-        <div class="item"><label class="required">6. 請求者様 氏名（ご家族等）</label><input type="text" id="payer" placeholder="例：桜　次郎"></div>
+        <div class="item"><label class="required">6. 請求者様 氏名</label><input type="text" id="payer" placeholder="例：桜　次郎"></div>
         <div class="item"><label class="required">7. 利用者様との関係</label><input type="text" id="relation" placeholder="例：長男、妻、本人など"></div>
         <div class="item"><label class="required">8. 郵便番号</label><input type="text" id="zip" placeholder="例：882-0000"></div>
         <div class="item"><label class="required">9. ご住所</label><textarea id="address" rows="2" placeholder="例：延岡市別府町3092"></textarea></div>
         <div class="item"><label class="required">10. ご連絡先（電話番号）</label><input type="tel" id="phone" placeholder="例：09012345678"></div>
         
-        <button type="button" id="submitBtn" class="btn-submit" onclick="sendData()">この内容で申し込む</button>
+        <button type="button" class="btn-submit" onclick="showConfirm()">入力内容を確認する</button>
         <p style="text-align:center; font-size:12px; color:#999; margin-top:15px;">※延岡市内の病院に限らせていただきます</p>
+    </div>
+
+    <div id="confirm-area" class="padding">
+        <p style="margin-top:0; color:#666; font-size:0.9rem;">以下の内容で送信します。よろしいですか？</p>
+        <div id="confirm-list"></div>
+        <button type="button" id="submitBtn" class="btn-submit" onclick="sendData()">この内容で申し込む</button>
+        <button type="button" class="btn-back" onclick="hideConfirm()">入力画面に戻る</button>
     </div>
 
     <div id="success-message">
@@ -138,14 +160,11 @@
 </div>
 
 <script>
-async function sendData() {
-    const btn = document.getElementById('submitBtn');
-    const formArea = document.getElementById('form-area');
-    const successMsg = document.getElementById('success-message');
+let formData = {};
 
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbznKJ6sfr-8oQkf-24BYbVqwIy8MDj8wAXDUpTAee5-13rxcwppO1A7qHBedoob8Rvn9w/exec";
-
-    const data = {
+function showConfirm() {
+    // データの収集
+    formData = {
         user: document.getElementById('user').value,
         user_kana: document.getElementById('user_kana').value,
         facility: document.getElementById('facility').value,
@@ -158,10 +177,41 @@ async function sendData() {
         phone: document.getElementById('phone').value
     };
 
-    if(Object.values(data).some(v => v === "")) {
+    // バリデーション
+    if(Object.values(formData).some(v => v.trim() === "")) {
         alert("必須項目をすべて入力してください");
         return;
     }
+
+    // 確認リストの作成
+    const labels = ["利用者氏名", "フリガナ", "施設名", "部屋番号", "支払方法", "請求者氏名", "関係", "郵便番号", "住所", "電話番号"];
+    const values = Object.values(formData);
+    let html = "";
+    labels.forEach((label, i) => {
+        html += `<div class="confirm-item"><div class="confirm-label">${label}</div><div class="confirm-value">${values[i]}</div></div>`;
+    });
+
+    document.getElementById('confirm-list').innerHTML = html;
+    document.getElementById('form-area').style.display = "none";
+    document.getElementById('confirm-area').style.display = "block";
+    document.getElementById('main-header').innerText = "お申込み内容の確認";
+    window.scrollTo(0, 0);
+}
+
+function hideConfirm() {
+    document.getElementById('confirm-area').style.display = "none";
+    document.getElementById('form-area').style.display = "block";
+    document.getElementById('main-header').innerText = "私物洗濯 受付お申込み";
+    window.scrollTo(0, 0);
+}
+
+async function sendData() {
+    const btn = document.getElementById('submitBtn');
+    const confirmArea = document.getElementById('confirm-area');
+    const successMsg = document.getElementById('success-message');
+    const header = document.getElementById('main-header');
+
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbznKJ6sfr-8oQkf-24BYbVqwIy8MDj8wAXDUpTAee5-13rxcwppO1A7qHBedoob8Rvn9w/exec";
 
     btn.disabled = true;
     btn.innerText = "送信中... ⏳";
@@ -170,12 +220,13 @@ async function sendData() {
         await fetch(GAS_URL, { 
             method: "POST", 
             mode: "no-cors", 
-            body: JSON.stringify(data) 
+            body: JSON.stringify(formData) 
         });
         
         window.scrollTo(0, 0);
-        formArea.style.display = "none";
+        confirmArea.style.display = "none";
         successMsg.style.display = "block";
+        header.innerText = "送信完了";
 
     } catch (e) {
         alert("送信に失敗しました。電波の良いところで再度お試しください。");
