@@ -3,262 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>さくらクリーニング | 病院私物洗濯代行サービス</title>
+    <title>私物洗濯受付システム | さくらクリーニング</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        :root {
-            --line-green: #06C755;
-            --line-bg: #f8f9fa;
-            --line-text-dark: #333333;
-            --line-white: #ffffff;
-            --accent-blue: #007bff;
+        :root { 
+            --line-green: #06c755; 
+            --bg-color: #f0f2f5; 
+            --line-text: #333333;
         }
-
-        body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            line-height: 1.6;
-            color: var(--line-text-dark);
-            background-color: var(--line-bg);
-            margin: 0;
-            padding: 0;
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 15px; 
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--line-white);
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        .form-card { 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            overflow: hidden; 
+            max-width: 500px; 
+            margin: 0 auto; 
         }
-        header {
-            background-color: var(--line-green);
-            padding: 35px 20px;
-            text-align: center;
-            color: var(--line-white);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 26px;
+        .header { 
+            background: var(--line-green); 
+            color: white; 
+            padding: 22px 20px; 
+            text-align: center; 
+            font-size: 1.25rem; 
+            font-weight: bold; 
             letter-spacing: 1px;
         }
-        .intro {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
+        .padding { padding: 25px 20px; }
+        .item { margin-bottom: 22px; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            color: var(--line-text); 
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            background-color: #fafafa;
+            -webkit-appearance: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--line-green);
             background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(6, 199, 85, 0.1);
         }
-        section {
-            padding: 30px 20px;
+        .btn-submit { 
+            background: var(--line-green); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 30px; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: opacity 0.3s;
         }
-        h2 {
-            display: flex;
-            align-items: center;
-            color: var(--line-green);
-            font-size: 20px;
-            border-left: 6px solid var(--line-green);
-            padding-left: 12px;
-            margin-bottom: 20px;
-        }
-        .feature-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
+        .btn-back {
             background: #fff;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 12px;
-        }
-        .feature-icon {
-            background: var(--line-green);
-            color: var(--line-white);
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: bold;
-            flex-shrink: 0;
-            margin-right: 15px;
-            text-align: center;
-        }
-        .price-box {
-            background: #f0faf3;
-            border: 2px solid var(--line-green);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-        }
-        .price-amount {
-            font-size: 38px;
-            font-weight: bold;
-            color: var(--line-green);
-        }
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #eee;
-        }
-        .schedule-table th {
-            background: #e6f9ed;
-            color: var(--line-green);
-            padding: 12px;
-            width: 30%;
-            font-size: 14px;
-        }
-        .schedule-table td {
-            padding: 12px;
-            background: #fff;
-        }
-        .hospital-list {
-            font-size: 14px;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .hospital-list li {
-            display: inline-block;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 5px 12px;
-            margin: 3px;
-            border-radius: 20px;
-            color: #444;
-        }
-        .info-card {
-            background: #fdfdfd;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 10px;
-        }
-        .tel-btn {
-            display: block;
-            background: var(--line-green);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 20px;
-            margin: 20px 0;
-        }
-        .tel-btn span {
-            font-size: 14px;
-            display: block;
-            font-weight: normal;
-        }
-        .company-info {
-            background: #eee;
-            padding: 20px;
-            font-size: 13px;
             color: #666;
-            text-align: center;
+            border: 1px solid #ccc;
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            cursor: pointer;
         }
-        footer {
-            background: var(--line-green);
-            color: var(--line-white);
-            text-align: center;
-            padding: 30px 20px;
-        }
+        .btn-submit:active, .btn-back:active { opacity: 0.8; }
+        .btn-submit:disabled { background: #ccc !important; cursor: not-allowed; }
+        .required::after { content: " *"; color: #e63946; }
+        #confirm-area { display: none; }
+        .confirm-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .confirm-label { font-size: 0.8rem; color: #888; margin-bottom: 4px; }
+        .confirm-value { font-size: 1rem; color: #333; font-weight: bold; }
+        #success-message { display: none; text-align: center; padding: 60px 20px; }
+        .success-icon { font-size: 70px; margin-bottom: 20px; color: var(--line-green); }
+        .success-title { font-size: 1.4rem; font-weight: bold; color: var(--line-text); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>さくらクリーニング</h1>
-        <p style="margin-top: 5px; font-size: 15px; opacity: 0.9;">病院私物洗濯代行サービス</p>
-    </header>
-
-    <div class="intro">
-        <p>ご入院されている患者様、ご家族様に代わってお洗濯いたします。<br>延岡市内の病院へ定期的にお伺いします。</p>
+<div class="form-card">
+    <div class="header" id="main-header">私物洗濯 受付お申込み</div>
+    
+    <div id="form-area" class="padding">
+        <div class="item"><label class="required">1. 利用者様 氏名</label><input type="text" id="user" placeholder="例：桜　太郎"></div>
+        <div class="item"><label class="required">2. 利用者様 フリガナ</label><input type="text" id="user_kana" placeholder="例：サクラ　タロウ"></div>
+        <div class="item">
+            <label class="required">3. 施設名</label>
+            <select id="facility">
+                <option value="">選択してください</option>
+                <option value="医師会病院">医師会病院</option>
+                <option value="岡村病院">岡村病院</option>
+                <option value="共立病院">共立病院</option>
+                <option value="黒木病院">黒木病院</option>
+                <option value="県立病院">県立病院</option>
+                <option value="杉本病院">杉本病院</option>
+                <option value="谷村病院">谷村病院</option>
+                <option value="延岡リハビリ">延岡リハビリ</option>
+                <option value="宮田病院">宮田病院</option>
+                <option value="あたご整形">あたご整形</option>
+                <option value="長沼医院">長沼医院</option>
+                <option value="その他">その他</option>
+            </select>
+        </div>
+        <div class="item"><label class="required">4. お部屋番号</label><input type="text" id="room" placeholder="例：226号室"></div>
+        <div class="item">
+            <label class="required">5. お支払い方法</label>
+            <select id="payment">
+                <option value="振込">振込</option>
+                <option value="来店">来店</option>
+            </select>
+        </div>
+        <div class="item"><label class="required">6. 請求者様 氏名</label><input type="text" id="payer" placeholder="例：桜　次郎"></div>
+        <div class="item"><label class="required">7. 利用者様との関係</label><input type="text" id="relation" placeholder="例：長男、妻、本人など"></div>
+        <div class="item"><label class="required">8. 郵便番号</label><input type="text" id="zip" placeholder="例：882-0000"></div>
+        <div class="item"><label class="required">9. ご住所</label><textarea id="address" rows="2" placeholder="例：延岡市別府町3092"></textarea></div>
+        <div class="item"><label class="required">10. ご連絡先（電話番号）</label><input type="tel" id="phone" placeholder="例：09012345678"></div>
+        
+        <button type="button" class="btn-submit" onclick="showConfirm()">入力内容を確認する</button>
+        <p style="text-align:center; font-size:12px; color:#999; margin-top:15px;">※延岡市内の病院に限らせていただきます</p>
     </div>
 
-    <section>
-        <h2>3つのこだわり</h2>
-        <div class="feature-item">
-            <div class="feature-icon">個別<br>洗濯</div>
-            <div>他の方と混ざらない個別洗いで紛失防止。衛生面も安心です。</div>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">除菌<br>抗菌</div>
-            <div>抗菌配合洗剤で、部屋干し臭や菌の増殖をしっかりガード。</div>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">乾燥<br>仕上げ</div>
-            <div>低温乾燥機を使用し、ふんわり柔らかな肌触りに。</div>
-        </div>
-    </section>
-
-    <section>
-        <h2>ご利用料金</h2>
-        <div class="price-box">
-            <p style="margin-bottom: 5px; font-weight: bold;">1袋（紙袋2枚準備）</p>
-            <span class="price-amount">800円</span><span style="font-weight: bold; color: var(--line-green);">（税込）</span>
-            <p style="font-size: 14px; margin-top: 10px; color: #555;">
-                <strong>初期費用・配送料金込み</strong><br>
-                パジャマ上下、肌着、タオル等 8〜10点程度
-            </p>
-        </div>
-        <p style="font-size: 12px; color: #888; margin-top: 10px;">※毛布・タオルケット等の大型品は別途料金となります。</p>
-    </section>
-
-    <section>
-        <h2>集配スケジュール</h2>
-        <table class="schedule-table">
-            <tr>
-                <th>月・水・金</th>
-                <td>
-                    <ul class="hospital-list">
-                        <li>共立</li> <li>谷村</li> <li>黒木</li> <li>県立</li> <li>杉本</li> <li>医師会</li>
-                        <li>延岡リハビリ</li> <li>あたご整形</li> <li>宮田医院</li> <li>おがわクリニック</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <th>火・木</th>
-                <td>
-                    <ul class="hospital-list">
-                        <li>平田</li> <li>岡村</li> <li>長沼医院</li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
-        <p style="font-size: 12px; color: #888; margin-top: 10px;">※延岡市内の病院に限らせていただきます。</p>
-    </section>
-
-    <section>
-        <h2>お問い合わせ</h2>
-        <div class="info-card">
-            <p style="margin: 0; font-size: 14px;"><strong>お電話でのお問い合わせ</strong></p>
-            <a href="tel:0120327929" class="tel-btn">
-                <span>フリーダイヤル（さくらクリーニング）</span>
-                0120-327-929
-            </a>
-            <p style="font-size: 14px; text-align: center; color: #666;">
-                受付時間：月曜〜金曜 9:00〜16:00
-            </p>
-        </div>
-
-        <div class="info-card" style="margin-top: 20px;">
-            <p><strong>お支払い方法</strong></p>
-            <p style="font-size: 14px; color: #555;">月1回のまとめ払い（月末締め）<br>翌月に請求書を発行。お振込または来店払いが可能です。</p>
-        </div>
-    </section>
-
-    <div class="company-info">
-        <p><strong>運営会社：株式会社コクセイメディック</strong></p>
-        <p>〒882-0863 宮崎県延岡市別府町3092</p>
-        <p>電話：0982-21-0668</p>
+    <div id="confirm-area" class="padding">
+        <p style="margin-top:0; color:#666; font-size:0.9rem;">以下の内容で送信します。よろしいですか？</p>
+        <div id="confirm-list"></div>
+        <button type="button" id="submitBtn" class="btn-submit" onclick="sendData()">この内容で申し込む</button>
+        <button type="button" class="btn-back" onclick="hideConfirm()">入力画面に戻る</button>
     </div>
 
-    <footer>
-        <p>© さくらクリーニング / 株式会社コクセイメディック</p>
-    </footer>
+    <div id="success-message">
+        <div class="success-icon">✅</div>
+        <div class="success-title">送信が完了しました</div>
+        <p style="color: #666; font-size: 1rem; line-height: 1.6;">
+            お申し込みありがとうございました。<br>
+            さくらクリーニングにて確認後、順次対応させていただきます。
+        </p>
+    </div>
 </div>
 
+<script>
+// LIFF初期化
+liff.init({ liffId: "2006880053-vj31Kk6w" }); // ここはあなたのLIFF IDになっています
+
+let formData = {};
+
+function showConfirm() {
+    formData = {
+        user: document.getElementById('user').value,
+        user_kana: document.getElementById('user_kana').value,
+        facility: document.getElementById('facility').value,
+        room: document.getElementById('room').value,
+        payment: document.getElementById('payment').value,
+        payer: document.getElementById('payer').value,
+        relation: document.getElementById('relation').value,
+        zip: document.getElementById('zip').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value
+    };
+
+    if(Object.values(formData).some(v => v.trim() === "")) {
+        alert("必須項目をすべて入力してください");
+        return;
+    }
+
+    const labels = ["利用者氏名", "フリガナ", "施設名", "部屋番号", "支払方法", "請求者氏名", "関係", "郵便番号", "住所", "電話番号"];
+    const values = Object.values(formData);
+    let html = "";
+    labels.forEach((label, i) => {
+        html += `<div class="confirm-item"><div class="confirm-label">${label}</div><div class="confirm-value">${values[i]}</div></div>`;
+    });
+
+    document.getElementById('confirm-list').innerHTML = html;
+    document.getElementById('form-area').style.display = "none";
+    document.getElementById('confirm-area').style.display = "block";
+    document.getElementById('main-header').innerText = "お申込み内容の確認";
+    window.scrollTo(0, 0);
+}
+
+function hideConfirm() {
+    document.getElementById('confirm-area').style.display = "none";
+    document.getElementById('form-area').style.display = "block";
+    document.getElementById('main-header').innerText = "私物洗濯 受付お申込み";
+    window.scrollTo(0, 0);
+}
+
+async function sendData() {
+    const btn = document.getElementById('submitBtn');
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxa8wfoNXv8Z5DHngMuYvSm7w2CiwpJMiC1Fnkuh9mZuvo9NLqmxu4a-pw3PjgZBJ_IKg/exec";
+
+    // 利用者IDの取得
+    if (liff.isLoggedIn()) {
+        formData.lineId = liff.getContext().userId;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "送信中... ⏳";
+
+    try {
+        await fetch(GAS_URL, { 
+            method: "POST", 
+            mode: "no-cors", 
+            body: JSON.stringify(formData) 
+        });
+        
+        window.scrollTo(0, 0);
+        document.getElementById('confirm-area').style.display = "none";
+        document.getElementById('success-message').style.display = "block";
+        document.getElementById('main-header').innerText = "送信完了";
+
+    } catch (e) {
+        alert("送信に失敗しました。再度お試しください。");
+        btn.disabled = false;
+        btn.innerText = "この内容で申し込む";
+    }
+}
+</script>
 </body>
 </html>
