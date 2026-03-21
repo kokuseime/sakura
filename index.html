@@ -214,12 +214,10 @@ async function sendData() {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxa8wfoNXv8Z5DHngMuYvSm7w2CiwpJMiC1Fnkuh9mZuvo9NLqmxu4a-pw3PjgZBJ_IKg/exec";
 
   
-
-    // ↓↓↓ この1行を追加することで、利用者への返信が可能になります！ ↓↓↓
+// ↓↓↓ この1行を追加することで、利用者への返信が可能になります！ ↓↓↓
     if (typeof liff !== 'undefined' && liff.isLoggedIn()) {
         formData.lineId = liff.getContext().userId;
     }
-
 
 
 
