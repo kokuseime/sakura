@@ -157,8 +157,20 @@
 </div>
 
 <script>
-// LIFF初期化
-liff.init({ liffId: "2006880053-vj31Kk6w" }); // ここはあなたのLIFF IDになっています
+let lineUserId = "";
+
+// LIFF初期化と自動ログイン
+liff.init({ liffId: "2006880053-vj31Kk6w" })
+  .then(() => {
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      // ユーザー情報の取得を試みる
+      liff.getProfile().then(profile => {
+        lineUserId = profile.userId;
+      }).catch(err => console.error("ID取得エラー:", err));
+    }
+  });
 
 let formData = {};
 
@@ -206,10 +218,8 @@ async function sendData() {
     const btn = document.getElementById('submitBtn');
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzoj03XpBzXQmUxOQoPVKLWEcsCw5qK8TNDMArXIVA55qnYB0oOSFnE-FZhHi-uMyNK4w/exec";
 
-    // 利用者IDの取得
-    if (liff.isLoggedIn()) {
-        formData.lineId = liff.getContext().userId;
-    }
+    // 最新のIDをセット（空なら"IDなし"）
+    formData.lineId = lineUserId || "IDなし";
 
     btn.disabled = true;
     btn.innerText = "送信中... ⏳";
